@@ -4,9 +4,6 @@ const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
-
-//const Employee = require("../lib/Employee");
-
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
@@ -14,10 +11,6 @@ const render = require("./src/page-template.js");
 
 
 // TODO: Write Code to gather information about the development team members, and render the HTML file.
-
-
-//import inquirer from '../lib/inquirer.js';
-
 
 
 // function to write README file
@@ -30,161 +23,131 @@ function writeToFile(fileName, data) {
 console.log("Please build your team!");
 
 
-function init() {
+// empty team array
+
+let team = [];
+
+//recursive questions in function
+
+
+function promptTeamMember() {
   inquirer
     .prompt([
       {
-        type: 'input',
-        name: 'managername',
-        message: "What is the team manager's name?",
-      },
-
-      {
-        type: 'input',
-        name: 'managerid',
-        message: "What's the team managers id?",
-
-      },
-
-      {
-        type: 'input',
-        name: 'manageremail',
-        message: "What's the team manager's email?",
-
-      },
-
-      {
-        type: 'input',
-        name: 'officeNumber',
-        message: "What's the team manager's office number?",
-
-      },
-
-      {
-
-        type: 'confirm',
-        name: 'more',
-        message: 'Want to enter another team member? (just hit enter for YES)?',
-        default: true
-
-
-      },
-
-
-  {
-        type: "list",
-        name: "choices",
-        message: "Which type of team member would you like to add?",
+        type: 'list',
+        name: 'type',
+        message: 'Which type of team member would you like to add?',
         choices: ['Engineer', 'Intern', 'Finish'],
-         when: (answers) => answers.more === true
-
       },
-
-      {
-        type: 'input',
-        name: 'engineername',
-        message: 'Enter the name of the Engineer:',
-        when: (answers) => answers.choices === 'Engineer'
-
-      },
-
-
-      {
-        type: 'input',
-        name: 'engineerid',
-        message: 'Enter the id of the Engineer:',
-        when: (answers) => answers.choices === 'Engineer'
-      },
-
-      {
-        type: 'input',
-        name: 'engineeremail',
-        message: 'Enter the email address of the Engineer:',
-        when: (answers) => answers.choices === 'Engineer'
-      },
-
-      {
-        type: 'input',
-        name: 'github',
-        message: 'Enter the github username of the Engineer:',
-        when: (answers) => answers.choices === 'Engineer'
-      },
-
-      {
-        type: 'input',
-        name: 'internname',
-        message: 'Enter the name of the Intern:',
-        when: (answers) => answers.choices === 'Intern'
-      },
-
-      {
-        type: 'input',
-        name: 'internid',
-        message: 'Enter the id of the Intern:',
-        when: (answers) => answers.choices === 'Intern'
-      },
-
-      {
-        type: 'input',
-        name: 'internemail',
-        message: 'Enter the email of the Intern:',
-        when: (answers) => answers.choices === 'Intern'
-      },
-
-      {
-        type: 'input',
-        name: 'school',
-        message: 'Enter the school the Intern is from:',
-        when: (answers) => answers.choices === 'Intern'
-
-      },
-
     ])
-
     .then((answers) => {
-
-      let team = [];
-
-      //make new classes from answers
-
-
-      // manager
-
-      const manager = new Manager(answers.managername, answers.managerid, answers.manageremail, answers.officeNumber);
-      
-
-      // engineer
-
-      const engineer = new Engineer(answers.engineername, answers.engineerid, answers.engineeremail, answers.github);
-
-      //intern
-
-      const intern = new Intern(answers.internname, answers.internid, answers.internemail, answers.school);
-
-
-  
-
-
-team.push(manager);
-team.push(engineer);
-team.push(intern);
-console.log(team);
-
-
-      const teamContent = render(team);
-      // const html = render(team);
-      //console.log(html);
-      
+      // if finish is selected, then the file will be written
+      if (answers.type === 'Finish') {
+        // Generate the HTML and write it to a file
+        const teamContent = render(team);
 
       writeToFile('team.html', teamContent);
+        console.log('Team profile generated successfully!');
+      } else {
+        // Prompt for team member details
+        inquirer
+          .prompt([
+            {
+              type: 'input',
+              name: 'name',
+              message: `What is the ${answers.type}'s name?`,
+            },
+            {
+              type: 'input',
+              name: 'id',
+              message: `What is the ${answers.type}'s id?`,
+            },
+            {
+              type: 'input',
+              name: 'email',
+              message: `What is the ${answers.type}'s email?`,
+            },
 
-    })
-};
+            // specific questions asked based on the employee 'type'
+            {
+              type: 'input',
+              name: 'github',
+              message: `What is the ${answers.type}'s GitHub username?`,
+              when: answers.type === 'Engineer',
+            },
+            {
+              type: 'input',
+              name: 'school',
+              message: `What is the ${answers.type}'s school?`,
+              when: answers.type === 'Intern',
+            },
+          ])
+          .then((memberAnswers) => {
+            // new classes based on the answers
+            if (answers.type === 'Engineer') {
+              const engineer = new Engineer(
+                memberAnswers.name,
+                memberAnswers.id,
+                memberAnswers.email,
+                memberAnswers.github
+              );
 
+              // then pushed to the team array 
+              team.push(engineer);
 
+            } else if (answers.type === 'Intern') {
+              const intern = new Intern(
+                memberAnswers.name,
+                memberAnswers.id,
+                memberAnswers.email,
+                memberAnswers.school
+              );
+              team.push(intern);
+            }
+            // recursive prompt
+            promptTeamMember();
+          });
+      }
+    });
+}
 
-init();
+// Prompt for the manager details - these will be asked first
+inquirer
+  .prompt([
+    {
+      type: 'input',
+      name: 'name',
+      message: "What is the team manager's name?",
+    },
+    {
+      type: 'input',
+      name: 'id',
+      message: "What is the team manager's id?",
+    },
+    {
+      type: 'input',
+      name: 'email',
+      message: "What is the team manager's email?",
+    },
+    {
+      type: 'input',
+      name: 'officeNumber',
+      message: "What is the team manager's office number?",
+    },
+  ])
+  .then((answers) => {
+    // Create the manager object
+    const manager = new Manager(
+      answers.name,
+      answers.id,
+      answers.email,
+      answers.officeNumber
+    );
+    team.push(manager);
 
+    // Prompt for the first team member
+    promptTeamMember();
+  });
 
 
 

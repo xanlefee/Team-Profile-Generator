@@ -1,0 +1,58 @@
+body {
+    color: brown;
+    background-image: url(/assets/images/cork\ board.jpg);
+}
+
+.jumbotron {
+    background-image: url(/assets/images/notey.jpg);
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+
+h1, h2, h3, h4 {
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+}
+
+
+
+.card-body {
+  background-image: url(/assets/images/post-it.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
+  
+}
+
+.list-group {
+    color: blue;
+    background: transparent;
+    
+}
+
+.list-group-item {
+    background-color: transparent;
+   border-color: transparent;
+    border-radius: 0;
+    
+    }
+
+
+
+.card-title {
+    color: rgb(39, 14, 107);
+    
+}
+
+
+.employee-card {
+   
+   
+   background-color: transparent;
+  
+  
+}
+
+.card {
+    border-color: transparent;
+}
