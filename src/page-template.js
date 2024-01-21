@@ -1,5 +1,5 @@
 // creates the team
-const generateTeam = team => {
+const generateTeam = (team) => {
 
     // creates the manager html
     const generateManager = manager => {
@@ -13,7 +13,7 @@ const generateTeam = team => {
             <ul class="list-group">
                 <li class="list-group-item">ID: ${manager.getId()}</li>
                 <li class="list-group-item">Email: <a href="mailto:${manager.getEmail()}">${manager.getEmail()}</a></li>
-                <li class="list-group-item">Office number: ${manager.getOfficeNumber()}</li>
+                <li class="list-group-item">Office number: ${manager.getOffice()}</li>
             </ul>
         </div>
     </div>
@@ -60,19 +60,13 @@ const generateTeam = team => {
 
     const html = [];
 
-    html.push(team
-        .filter(employee => employee.getRole() === "Manager")
-        .map(manager => generateManager(manager))
+    html.push(team.filter(employee => employee.getRole() === "Manager")
+    .map(manager => generateManager(manager)));
+    html.push(team.filter(employee => employee.getRole() === "Engineer")
+    .map(engineer => generateEngineer(engineer)).join("")
     );
-    html.push(team
-        .filter(employee => employee.getRole() === "Engineer")
-        .map(engineer => generateEngineer(engineer))
-        .join("")
-    );
-    html.push(team
-        .filter(employee => employee.getRole() === "Intern")
-        .map(intern => generateIntern(intern))
-        .join("")
+    html.push(team.filter(employee => employee.getRole() === "Intern")
+    .map(intern => generateIntern(intern)).join("")
     );
 
     return html.join("");
