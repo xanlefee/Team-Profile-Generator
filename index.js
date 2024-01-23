@@ -46,7 +46,7 @@ function promptTeamMember() {
         // Generate the HTML and write it to a file
         const teamContent = render(team);
 
-      writeToFile('team.html', teamContent);
+      writeToFile(outputPath, teamContent);
         console.log('Team profile generated successfully!');
       } else {
         // Prompt for team member details
